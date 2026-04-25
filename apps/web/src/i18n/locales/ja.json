@@ -1,0 +1,57 @@
+{
+  "common": {
+    "login": "ログイン",
+    "register": "新規登録",
+    "logout": "ログアウト",
+    "submit": "送信",
+    "cancel": "キャンセル",
+    "confirm": "確認",
+    "loading": "読込中…",
+    "save": "保存",
+    "delete": "削除",
+    "search": "検索",
+    "back": "戻る",
+    "more": "もっと",
+    "success": "成功しました",
+    "fail": "失敗しました"
+  },
+  "nav": {
+    "home": "ホーム",
+    "trade": "取引",
+    "blindbox": "ブラインドボックス",
+    "wallet": "ウォレット",
+    "agent": "代理店",
+    "profile": "マイページ",
+    "tickets": "チケット"
+  },
+  "auth": {
+    "welcome_back": "おかえりなさい",
+    "sign_in_account": "アカウントにログイン",
+    "username_or_email": "ユーザー名 / メール",
+    "password": "パスワード",
+    "totp_code": "2 段階認証コード",
+    "totp_required_hint": "認証コードを入力してください",
+    "passkey_login": "Passkey でログイン",
+    "register_now": "今すぐ登録",
+    "back_home": "ホームへ戻る",
+    "or": "または"
+  },
+  "wallet": {
+    "balance": "利用可能残高",
+    "frozen": "凍結残高",
+    "deposit": "入金",
+    "withdraw": "出金",
+    "history": "履歴"
+  },
+  "passkey": {
+    "title": "Passkey",
+    "list_empty": "Passkey が登録されていません",
+    "add": "Passkey を追加",
+    "device_name": "デバイス名",
+    "remove": "削除"
+  },
+  "errors": {
+    "network": "ネットワークエラーです。後ほど再試行してください",
+    "session_expired": "ログインが期限切れです。再ログインしてください"
+  }
+}

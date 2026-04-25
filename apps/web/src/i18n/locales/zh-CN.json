@@ -1,0 +1,57 @@
+{
+  "common": {
+    "login": "登录",
+    "register": "注册",
+    "logout": "退出登录",
+    "submit": "提交",
+    "cancel": "取消",
+    "confirm": "确认",
+    "loading": "加载中…",
+    "save": "保存",
+    "delete": "删除",
+    "search": "搜索",
+    "back": "返回",
+    "more": "更多",
+    "success": "操作成功",
+    "fail": "操作失败"
+  },
+  "nav": {
+    "home": "首页",
+    "trade": "交易",
+    "blindbox": "盲盒",
+    "wallet": "钱包",
+    "agent": "代理中心",
+    "profile": "我的",
+    "tickets": "工单"
+  },
+  "auth": {
+    "welcome_back": "欢迎回来",
+    "sign_in_account": "登录您的账户",
+    "username_or_email": "用户名 / 邮箱",
+    "password": "密码",
+    "totp_code": "二步验证码",
+    "totp_required_hint": "请输入二步验证码",
+    "passkey_login": "使用 Passkey 登录",
+    "register_now": "立即注册",
+    "back_home": "返回首页",
+    "or": "或"
+  },
+  "wallet": {
+    "balance": "可用余额",
+    "frozen": "冻结余额",
+    "deposit": "充值",
+    "withdraw": "提现",
+    "history": "流水"
+  },
+  "passkey": {
+    "title": "Passkey",
+    "list_empty": "您还没有添加任何 Passkey",
+    "add": "添加 Passkey",
+    "device_name": "设备名称",
+    "remove": "移除"
+  },
+  "errors": {
+    "network": "网络异常，请稍后再试",
+    "session_expired": "登录已过期，请重新登录"
+  }
+}

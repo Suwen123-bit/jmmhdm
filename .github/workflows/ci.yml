@@ -1,0 +1,95 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: '20'
+  PNPM_VERSION: '9'
+
+jobs:
+  lint-typecheck-test:
+    name: Lint / Typecheck / Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build shared
+        run: pnpm --filter @app/shared build
+
+      - name: Typecheck server
+        run: pnpm --filter @app/server typecheck
+
+      - name: Test server
+        run: pnpm --filter @app/server test
+
+      - name: Build server
+        run: pnpm --filter @app/server build
+
+      - name: Build web
+        run: pnpm --filter @app/web build
+
+      - name: Build admin
+        run: pnpm --filter @app/admin build
+
+      - name: Upload web build artifact
+        if: github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-dist
+          path: apps/web/dist
+          retention-days: 7
+
+      - name: Upload admin build artifact
+        if: github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v4
+        with:
+          name: admin-dist
+          path: apps/admin/dist
+          retention-days: 7
+
+  drizzle-migrations-check:
+    name: Migrations consistent with schema
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @app/shared build
+      - name: Drizzle generate (no diff allowed)
+        run: |
+          pnpm --filter @app/server db:generate
+          if ! git diff --quiet apps/server/src/db/migrations; then
+            echo "::error::schema.ts changes have not been migrated. Run 'pnpm --filter @app/server db:generate' locally and commit the result."
+            git diff apps/server/src/db/migrations
+            exit 1
+          fi

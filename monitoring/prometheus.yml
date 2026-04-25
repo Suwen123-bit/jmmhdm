@@ -1,0 +1,24 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: ['alertmanager:9093']
+
+rule_files:
+  - /etc/prometheus/alert.rules.yml
+
+scrape_configs:
+  - job_name: 'crypto-platform-api'
+    metrics_path: /metrics
+    static_configs:
+      # 容器化部署时改成 server:3001；docker host 下使用 host.docker.internal
+      - targets: ['host.docker.internal:3001']
+        labels:
+          service: api
+
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']

@@ -1,0 +1,91 @@
+{
+  "title": "Crypto Platform Overview",
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "refresh": "30s",
+  "panels": [
+    {
+      "type": "stat",
+      "title": "HTX 行情连接",
+      "targets": [{ "expr": "htx_connection_up", "refId": "A" }],
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": null },
+              { "color": "green", "value": 1 }
+            ]
+          },
+          "mappings": [
+            { "type": "value", "options": { "0": { "text": "DOWN" }, "1": { "text": "UP" } } }
+          ]
+        }
+      },
+      "gridPos": { "h": 4, "w": 4, "x": 0, "y": 0 }
+    },
+    {
+      "type": "stat",
+      "title": "近 5min 开仓 / s",
+      "targets": [{ "expr": "sum(rate(trades_opened_total[5m]))", "refId": "A" }],
+      "gridPos": { "h": 4, "w": 4, "x": 4, "y": 0 }
+    },
+    {
+      "type": "stat",
+      "title": "近 5min 结算 / s",
+      "targets": [{ "expr": "sum(rate(trades_settled_total[5m]))", "refId": "A" }],
+      "gridPos": { "h": 4, "w": 4, "x": 8, "y": 0 }
+    },
+    {
+      "type": "stat",
+      "title": "今日完成充值数",
+      "targets": [{ "expr": "sum(increase(deposits_finished_total[24h]))", "refId": "A" }],
+      "gridPos": { "h": 4, "w": 4, "x": 12, "y": 0 }
+    },
+    {
+      "type": "stat",
+      "title": "今日完成提现数",
+      "targets": [{ "expr": "sum(increase(withdrawals_finished_total[24h]))", "refId": "A" }],
+      "gridPos": { "h": 4, "w": 4, "x": 16, "y": 0 }
+    },
+    {
+      "type": "timeseries",
+      "title": "HTTP 请求 QPS by status",
+      "targets": [
+        { "expr": "sum(rate(http_requests_total[1m])) by (status)", "refId": "A", "legendFormat": "{{status}}" }
+      ],
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 4 }
+    },
+    {
+      "type": "timeseries",
+      "title": "HTTP p95 latency (ms)",
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum by (le) (rate(http_request_duration_ms_bucket[5m])))",
+          "refId": "A",
+          "legendFormat": "p95"
+        },
+        {
+          "expr": "histogram_quantile(0.50, sum by (le) (rate(http_request_duration_ms_bucket[5m])))",
+          "refId": "B",
+          "legendFormat": "p50"
+        }
+      ],
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 4 }
+    },
+    {
+      "type": "timeseries",
+      "title": "AI 异常事件 (by severity)",
+      "targets": [
+        { "expr": "sum(rate(ai_anomalies_total[5m])) by (severity)", "refId": "A", "legendFormat": "{{severity}}" }
+      ],
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 12 }
+    },
+    {
+      "type": "timeseries",
+      "title": "WS 在线连接",
+      "targets": [{ "expr": "ws_clients_connected", "refId": "A" }],
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 12 }
+    }
+  ]
+}

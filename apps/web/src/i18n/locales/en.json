@@ -1,0 +1,57 @@
+{
+  "common": {
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout",
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "loading": "Loading…",
+    "save": "Save",
+    "delete": "Delete",
+    "search": "Search",
+    "back": "Back",
+    "more": "More",
+    "success": "Success",
+    "fail": "Failed"
+  },
+  "nav": {
+    "home": "Home",
+    "trade": "Trade",
+    "blindbox": "Blind Box",
+    "wallet": "Wallet",
+    "agent": "Agent",
+    "profile": "Profile",
+    "tickets": "Tickets"
+  },
+  "auth": {
+    "welcome_back": "Welcome back",
+    "sign_in_account": "Sign in to your account",
+    "username_or_email": "Username / Email",
+    "password": "Password",
+    "totp_code": "2FA Code",
+    "totp_required_hint": "Please enter your 2FA code",
+    "passkey_login": "Sign in with Passkey",
+    "register_now": "Sign up",
+    "back_home": "Back to home",
+    "or": "or"
+  },
+  "wallet": {
+    "balance": "Available Balance",
+    "frozen": "Frozen Balance",
+    "deposit": "Deposit",
+    "withdraw": "Withdraw",
+    "history": "History"
+  },
+  "passkey": {
+    "title": "Passkey",
+    "list_empty": "No passkeys yet",
+    "add": "Add Passkey",
+    "device_name": "Device Name",
+    "remove": "Remove"
+  },
+  "errors": {
+    "network": "Network error, please try again later",
+    "session_expired": "Session expired, please sign in again"
+  }
+}

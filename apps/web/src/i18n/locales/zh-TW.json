@@ -1,0 +1,57 @@
+{
+  "common": {
+    "login": "登入",
+    "register": "註冊",
+    "logout": "登出",
+    "submit": "提交",
+    "cancel": "取消",
+    "confirm": "確認",
+    "loading": "載入中…",
+    "save": "儲存",
+    "delete": "刪除",
+    "search": "搜尋",
+    "back": "返回",
+    "more": "更多",
+    "success": "操作成功",
+    "fail": "操作失敗"
+  },
+  "nav": {
+    "home": "首頁",
+    "trade": "交易",
+    "blindbox": "盲盒",
+    "wallet": "錢包",
+    "agent": "代理中心",
+    "profile": "我的",
+    "tickets": "工單"
+  },
+  "auth": {
+    "welcome_back": "歡迎回來",
+    "sign_in_account": "登入您的帳戶",
+    "username_or_email": "使用者名稱 / 信箱",
+    "password": "密碼",
+    "totp_code": "二步驗證碼",
+    "totp_required_hint": "請輸入二步驗證碼",
+    "passkey_login": "使用 Passkey 登入",
+    "register_now": "立即註冊",
+    "back_home": "返回首頁",
+    "or": "或"
+  },
+  "wallet": {
+    "balance": "可用餘額",
+    "frozen": "凍結餘額",
+    "deposit": "充值",
+    "withdraw": "提現",
+    "history": "流水"
+  },
+  "passkey": {
+    "title": "Passkey",
+    "list_empty": "您還沒有新增任何 Passkey",
+    "add": "新增 Passkey",
+    "device_name": "裝置名稱",
+    "remove": "移除"
+  },
+  "errors": {
+    "network": "網路異常，請稍後再試",
+    "session_expired": "登入已過期，請重新登入"
+  }
+}

@@ -1,0 +1,29 @@
+global:
+  resolve_timeout: 5m
+
+route:
+  receiver: 'telegram-ops'
+  group_by: ['alertname', 'severity']
+  group_wait: 30s
+  group_interval: 5m
+  repeat_interval: 1h
+  routes:
+    - matchers:
+        - severity = "critical"
+      receiver: 'telegram-ops'
+      continue: true
+
+receivers:
+  - name: 'telegram-ops'
+    webhook_configs:
+      # 由 server 自带 /api/admin/alertmanager/webhook 转发到 Telegram
+      # 也可以直接使用第三方 alertmanager-telegram 镜像
+      - url: 'http://host.docker.internal:3001/api/internal/alertmanager-webhook'
+        send_resolved: true
+
+inhibit_rules:
+  - source_matchers:
+      - severity = "critical"
+    target_matchers:
+      - severity = "warning"
+    equal: ['alertname']

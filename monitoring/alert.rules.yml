@@ -1,0 +1,67 @@
+groups:
+  - name: crypto-platform-business
+    interval: 30s
+    rules:
+      - alert: HighHttpErrorRate
+        expr: |
+          (sum(rate(http_requests_total{status=~"5.."}[5m]))
+            / sum(rate(http_requests_total[5m]))) > 0.05
+        for: 3m
+        labels:
+          severity: critical
+        annotations:
+          summary: '5xx error rate > 5% for 3min'
+          description: 'HTTP 5xx error rate is {{ $value | humanizePercentage }}'
+
+      - alert: HighRequestLatencyP95
+        expr: |
+          histogram_quantile(0.95, sum by (le, path) (rate(http_request_duration_ms_bucket[5m]))) > 1000
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: 'p95 latency > 1s for path {{ $labels.path }}'
+
+      - alert: HtxConnectionDown
+        expr: htx_connection_up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: 'HTX 行情 WebSocket 断开 > 1min'
+          description: '价格订阅中断，将影响交易开仓与结算'
+
+      - alert: AnomalyCriticalSpike
+        expr: |
+          increase(ai_anomalies_total{severity="critical"}[10m]) > 5
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: '10min 内出现 {{ $value }} 个 critical 风控异常'
+
+      - alert: TradesSettlementBacklog
+        expr: |
+          (rate(trades_opened_total[5m]) - rate(trades_settled_total[5m])) > 50
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: '5min 净敞口订单 > 50/s，可能结算积压'
+
+      - alert: ProcessRSSHigh
+        expr: process_resident_memory_bytes > 1.5e9
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: 'API 进程驻留内存 > 1.5GB'
+
+      - alert: NoIncomingDeposits
+        expr: |
+          sum(increase(deposits_finished_total[1h])) == 0
+        for: 2h
+        labels:
+          severity: warning
+        annotations:
+          summary: '过去 1 小时无成功充值，请检查 NOWPayments / IPN 链路'

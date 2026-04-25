@@ -1,0 +1,57 @@
+{
+  "common": {
+    "login": "로그인",
+    "register": "회원가입",
+    "logout": "로그아웃",
+    "submit": "제출",
+    "cancel": "취소",
+    "confirm": "확인",
+    "loading": "불러오는 중…",
+    "save": "저장",
+    "delete": "삭제",
+    "search": "검색",
+    "back": "뒤로",
+    "more": "더보기",
+    "success": "성공했습니다",
+    "fail": "실패했습니다"
+  },
+  "nav": {
+    "home": "홈",
+    "trade": "거래",
+    "blindbox": "블라인드박스",
+    "wallet": "지갑",
+    "agent": "에이전트",
+    "profile": "내 정보",
+    "tickets": "문의"
+  },
+  "auth": {
+    "welcome_back": "다시 오신 것을 환영합니다",
+    "sign_in_account": "계정에 로그인",
+    "username_or_email": "아이디 / 이메일",
+    "password": "비밀번호",
+    "totp_code": "2단계 인증 코드",
+    "totp_required_hint": "인증 코드를 입력하세요",
+    "passkey_login": "Passkey 로 로그인",
+    "register_now": "지금 가입하기",
+    "back_home": "홈으로 돌아가기",
+    "or": "또는"
+  },
+  "wallet": {
+    "balance": "사용 가능 잔액",
+    "frozen": "동결 잔액",
+    "deposit": "입금",
+    "withdraw": "출금",
+    "history": "내역"
+  },
+  "passkey": {
+    "title": "Passkey",
+    "list_empty": "등록된 Passkey 가 없습니다",
+    "add": "Passkey 추가",
+    "device_name": "디바이스 이름",
+    "remove": "제거"
+  },
+  "errors": {
+    "network": "네트워크 오류입니다. 잠시 후 다시 시도해주세요",
+    "session_expired": "로그인이 만료되었습니다. 다시 로그인해주세요"
+  }
+}

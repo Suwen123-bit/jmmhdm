@@ -1,0 +1,30 @@
+{
+  "name": "crypto-options-blindbox-platform",
+  "version": "1.0.0",
+  "private": true,
+  "description": "加密货币合约期权交易 & 商品盲盒平台 (2026 商业运营级)",
+  "packageManager": "pnpm@9.12.0",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "typecheck": "turbo run typecheck",
+    "db:generate": "pnpm --filter @app/server db:generate",
+    "db:migrate": "pnpm --filter @app/server db:migrate",
+    "db:seed": "pnpm --filter @app/server db:seed",
+    "dev:server": "pnpm --filter @app/server dev",
+    "dev:web": "pnpm --filter @app/web dev",
+    "dev:admin": "pnpm --filter @app/admin dev",
+    "e2e": "pnpm --filter @app/e2e test",
+    "e2e:ui": "pnpm --filter @app/e2e test:ui"
+  },
+  "devDependencies": {
+    "turbo": "^2.3.0",
+    "typescript": "^5.6.3",
+    "prettier": "^3.3.3"
+  }
+}
