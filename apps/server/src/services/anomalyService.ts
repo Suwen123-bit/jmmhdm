@@ -93,7 +93,7 @@ export async function runAnomalyScan(): Promise<void> {
      AND a.symbol = b.symbol
      AND a.duration = b.duration
      AND a.direction = 'call' AND b.direction = 'put'
-     AND a.created_at >= ${minus15m} AND b.created_at >= ${minus15m}
+     AND a.created_at >= ${minus15m.toISOString()}::timestamptz AND b.created_at >= ${minus15m.toISOString()}::timestamptz
     GROUP BY a.user_id, a.symbol, a.duration
     HAVING SUM(a.amount) > 500 AND SUM(b.amount) > 500
   `);

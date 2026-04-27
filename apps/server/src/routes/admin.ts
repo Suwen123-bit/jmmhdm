@@ -102,12 +102,13 @@ admin.get('/dashboard', async (c) => {
     // 近 7 日趋势聚合（按天）
     const sevenAgo = new Date(today);
     sevenAgo.setDate(sevenAgo.getDate() - 6);
+    const sevenAgoIso = sevenAgo.toISOString();
     const [depRows, wdRows, trRows] = await Promise.all([
       db.execute(sql`
         SELECT to_char(date_trunc('day', created_at), 'YYYY-MM-DD') AS day,
                COALESCE(SUM(price_amount), 0)::text AS amount
         FROM ${deposits}
-        WHERE created_at >= ${sevenAgo} AND status = 'finished'
+        WHERE created_at >= ${sevenAgoIso}::timestamptz AND status = 'finished'
         GROUP BY 1
         ORDER BY 1
       `),
@@ -115,7 +116,7 @@ admin.get('/dashboard', async (c) => {
         SELECT to_char(date_trunc('day', created_at), 'YYYY-MM-DD') AS day,
                COALESCE(SUM(amount), 0)::text AS amount
         FROM ${withdrawals}
-        WHERE created_at >= ${sevenAgo} AND status = 'finished'
+        WHERE created_at >= ${sevenAgoIso}::timestamptz AND status = 'finished'
         GROUP BY 1
         ORDER BY 1
       `),
@@ -123,7 +124,7 @@ admin.get('/dashboard', async (c) => {
         SELECT to_char(date_trunc('day', created_at), 'YYYY-MM-DD') AS day,
                COALESCE(SUM(amount), 0)::text AS amount
         FROM ${trades}
-        WHERE created_at >= ${sevenAgo}
+        WHERE created_at >= ${sevenAgoIso}::timestamptz
         GROUP BY 1
         ORDER BY 1
       `),

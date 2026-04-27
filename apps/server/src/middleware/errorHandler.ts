@@ -36,14 +36,22 @@ export function handleError(err: Error, c: Context): Response {
       400
     );
   }
-  logger.error({ err: err.message, stack: err.stack }, '[server error]');
+  logger.error({ err: err.message, stack: err.stack, path: c.req.path }, '[server error]');
   // 仅上报 5xx 级未知异常到 Sentry，AppError/ZodError 属于业务可控错误不上报
   captureException(err, {
     path: c.req.path,
     method: c.req.method,
   });
+  const isProd = process.env.NODE_ENV === 'production';
   return c.json(
-    { ok: false, error: { code: 'INTERNAL', message: '服务异常，请稍后再试' } },
+    {
+      ok: false,
+      error: {
+        code: 'INTERNAL',
+        message: '服务异常，请稍后再试',
+        ...(isProd ? {} : { detail: err.message, stack: err.stack?.split('\n').slice(0, 5) }),
+      },
+    },
     500
   );
 }

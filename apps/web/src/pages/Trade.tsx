@@ -28,7 +28,6 @@ export default function Trade() {
 
   const [interval, setInterval] = useState<'1min' | '5min' | '15min' | '60min' | '1day'>('5min');
   const [duration, setDuration] = useState(60);
-  const [direction, setDirection] = useState<'up' | 'down'>('up');
   const [amount, setAmount] = useState('100');
 
   const durations = config?.durations ?? [
@@ -60,11 +59,11 @@ export default function Trade() {
   });
 
   const openMutation = useMutation({
-    mutationFn: () =>
+    mutationFn: (dir: 'call' | 'put') =>
       request({
         url: '/trade/open',
         method: 'POST',
-        data: { symbol, direction, amount: Number(amount), duration },
+        data: { symbol, direction: dir, amount: Number(amount), duration },
       }),
     onSuccess: () => {
       toast.success('下单成功');
@@ -74,7 +73,7 @@ export default function Trade() {
     onError: (err: Error) => toast.error(err.message),
   });
 
-  const onSubmit = () => {
+  const onSubmit = (dir: 'call' | 'put') => {
     if (!user) {
       navigate('/login');
       return;
@@ -84,7 +83,7 @@ export default function Trade() {
       toast.error('请输入金额');
       return;
     }
-    openMutation.mutate();
+    openMutation.mutate(dir);
   };
 
   const up = (tick?.change24h ?? 0) >= 0;
@@ -171,8 +170,8 @@ export default function Trade() {
                   {(tradesResp?.items ?? []).map((t) => (
                     <tr key={t.id} className="border-t border-zinc-800">
                       <td className="px-2 py-2 uppercase">{t.symbol}</td>
-                      <td className={cn('px-2 py-2', t.direction === 'up' ? 'text-emerald-400' : 'text-rose-400')}>
-                        {t.direction === 'up' ? '买涨' : '买跌'}
+                      <td className={cn('px-2 py-2', t.direction === 'call' ? 'text-emerald-400' : 'text-rose-400')}>
+                        {t.direction === 'call' ? '买涨' : '买跌'}
                       </td>
                       <td className="px-2 py-2 text-right">{formatNumber(t.amount, 2)}</td>
                       <td className="px-2 py-2 text-right">{formatNumber(t.entryPrice, 2)}</td>
@@ -250,20 +249,14 @@ export default function Trade() {
           </div>
           <div className="grid grid-cols-2 gap-2">
             <button
-              onClick={() => {
-                setDirection('up');
-                onSubmit();
-              }}
+              onClick={() => onSubmit('call')}
               disabled={openMutation.isPending}
               className="btn-up py-3"
             >
               <TrendingUp className="mr-1 h-4 w-4" /> 买涨
             </button>
             <button
-              onClick={() => {
-                setDirection('down');
-                onSubmit();
-              }}
+              onClick={() => onSubmit('put')}
               disabled={openMutation.isPending}
               className="btn-down py-3"
             >

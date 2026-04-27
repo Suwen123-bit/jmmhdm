@@ -9,7 +9,7 @@ export default function Wallet() {
   const user = useAuth((s) => s.user);
   const { data: logs } = useQuery({
     queryKey: ['wallet', 'logs'],
-    queryFn: () => request<{ items: any[] }>({ url: '/user/wallet-logs', params: { page: 1, pageSize: 30 } }),
+    queryFn: () => request<{ items: any[] }>({ url: '/user/wallet/logs', params: { page: 1, pageSize: 30 } }),
   });
 
   return (
