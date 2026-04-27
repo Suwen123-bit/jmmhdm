@@ -65,6 +65,7 @@ export default function Login() {
         <div>
           <label className="mb-1 block text-sm text-zinc-300">用户名 / 邮箱</label>
           <input
+            aria-label="用户名"
             className="input"
             value={account}
             onChange={(e) => setAccount(e.target.value)}
@@ -74,6 +75,7 @@ export default function Login() {
         <div>
           <label className="mb-1 block text-sm text-zinc-300">密码</label>
           <input
+            aria-label="密码"
             type="password"
             className="input"
             value={password}

@@ -74,19 +74,19 @@ export default function Register() {
         </div>
         <div>
           <label className="mb-1 block text-sm text-zinc-300">用户名</label>
-          <input className="input" value={username} onChange={(e) => setUsername(e.target.value)} required minLength={3} maxLength={32} />
+          <input aria-label="用户名" className="input" value={username} onChange={(e) => setUsername(e.target.value)} required minLength={3} maxLength={32} />
         </div>
         <div>
           <label className="mb-1 block text-sm text-zinc-300">邮箱</label>
-          <input type="email" className="input" value={email} onChange={(e) => setEmail(e.target.value)} required />
+          <input aria-label="邮箱" type="email" className="input" value={email} onChange={(e) => setEmail(e.target.value)} required />
         </div>
         <div>
           <label className="mb-1 block text-sm text-zinc-300">密码</label>
-          <input type="password" className="input" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={8} />
+          <input aria-label="密码" type="password" className="input" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={8} />
         </div>
         <div>
           <label className="mb-1 block text-sm text-zinc-300">确认密码</label>
-          <input type="password" className="input" value={confirm} onChange={(e) => setConfirm(e.target.value)} required />
+          <input aria-label="确认密码" type="password" className="input" value={confirm} onChange={(e) => setConfirm(e.target.value)} required />
         </div>
         <div>
           <label className="mb-1 block text-sm text-zinc-300">邀请码 (可选)</label>
