@@ -18,10 +18,10 @@ interface AuthState {
 
 export const useAuth = create<AuthState>((set) => ({
   user: null,
-  loading: false,
+  loading: !!getAccessToken(),
   fetchMe: async () => {
     if (!getAccessToken()) {
-      set({ user: null });
+      set({ user: null, loading: false });
       return;
     }
     try {

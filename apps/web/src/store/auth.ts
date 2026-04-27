@@ -30,13 +30,14 @@ interface AuthState {
   setUser: (user: CurrentUser | null) => void;
 }
 
-export const useAuth = create<AuthState>((set, get) => ({
+export const useAuth = create<AuthState>((set) => ({
   user: null,
-  loading: false,
+  // 若已有持久化 token，初始即为 loading，避免受保护路由首屏闪回 /login
+  loading: !!getAccessToken(),
   setUser: (user) => set({ user }),
   fetchMe: async () => {
     if (!getAccessToken()) {
-      set({ user: null });
+      set({ user: null, loading: false });
       return;
     }
     try {
