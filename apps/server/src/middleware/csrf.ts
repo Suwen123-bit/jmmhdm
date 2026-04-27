@@ -23,6 +23,8 @@ const SAFE_METHODS = new Set(['GET', 'HEAD', 'OPTIONS']);
 
 const SKIP_PATHS = [
   '/api/nowpay/ipn',          // 支付 webhook 用 HMAC 验签代替
+  '/api/telegram/webhook',    // Telegram webhook 用 secret token 验签代替
+  '/api/internal',            // 内部端点（如 alertmanager-webhook），需在网关侧 IP 白名单
   '/api/auth/csrf',           // 颁发 token 自身
   '/api/auth/login',          // 登录前没 token
   '/api/auth/register',       // 注册前没 token
