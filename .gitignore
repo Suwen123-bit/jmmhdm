@@ -16,9 +16,6 @@ Thumbs.db
 .idea
 *.tsbuildinfo
 pnpm-lock.yaml.bak
-*.rar
-*.zip
-*.7z
 uploads/
 data/
 postgres-data/

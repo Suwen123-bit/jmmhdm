@@ -12,6 +12,8 @@ FROM base AS builder
 ARG VITE_API_URL=/api
 ENV VITE_API_URL=$VITE_API_URL
 COPY --from=deps /app/node_modules ./node_modules
+COPY --from=deps /app/apps/admin/node_modules ./apps/admin/node_modules
+COPY --from=deps /app/packages/shared/node_modules ./packages/shared/node_modules
 COPY . .
 RUN pnpm --filter @app/shared build
 RUN pnpm --filter @app/admin build

@@ -214,27 +214,7 @@ admin.get('/users', async (c) => {
   }
 });
 
-admin.post('/users/:id', zValidator('json', adminUpdateUserSchema), async (c) => {
-  try {
-    const id = Number(c.req.param('id'));
-    const data = c.req.valid('json');
-    const before = await db.select().from(users).where(eq(users.id, id)).limit(1);
-    if (!before[0]) throw new AppError('USER_NOT_FOUND', '用户不存在', 404);
-    const set: any = { updatedAt: new Date() };
-    if (data.status) set.status = data.status;
-    if (data.role) set.role = data.role;
-    if (data.email) set.email = data.email;
-    if (data.password) set.passwordHash = await bcrypt.hash(data.password, 10);
-    await db.update(users).set(set).where(eq(users.id, id));
-    const after = await db.select().from(users).where(eq(users.id, id)).limit(1);
-    await audit(c.get('auth').userId, 'user.update', 'user', id, before[0], after[0], c);
-    return c.json(ok({ success: true }));
-  } catch (e) {
-    return handleError(e as Error, c);
-  }
-});
-
-// 手动调整余额（充值/扣款）
+// 手动调整余额（充值/扣款）—— 必须放在 :id 动态路由之前，否则会被 :id 吃掉
 const adjustSchema = z.object({
   userId: z.number().int().positive(),
   amount: z.number(), // 正负
@@ -253,6 +233,29 @@ admin.post('/users/adjust-balance', zValidator('json', adjustSchema), async (c) 
       description: `[管理员调整] ${reason}`,
     });
     await audit(adminId, 'user.adjust_balance', 'user', userId, null, { amount, reason }, c);
+    return c.json(ok({ success: true }));
+  } catch (e) {
+    return handleError(e as Error, c);
+  }
+});
+
+admin.post('/users/:id{[0-9]+}', zValidator('json', adminUpdateUserSchema), async (c) => {
+  try {
+    const id = Number(c.req.param('id'));
+    if (!Number.isInteger(id) || id <= 0) {
+      throw new AppError('INVALID_ID', '无效的用户 ID', 400);
+    }
+    const data = c.req.valid('json');
+    const before = await db.select().from(users).where(eq(users.id, id)).limit(1);
+    if (!before[0]) throw new AppError('USER_NOT_FOUND', '用户不存在', 404);
+    const set: any = { updatedAt: new Date() };
+    if (data.status) set.status = data.status;
+    if (data.role) set.role = data.role;
+    if (data.email) set.email = data.email;
+    if (data.password) set.passwordHash = await bcrypt.hash(data.password, 10);
+    await db.update(users).set(set).where(eq(users.id, id));
+    const after = await db.select().from(users).where(eq(users.id, id)).limit(1);
+    await audit(c.get('auth').userId, 'user.update', 'user', id, before[0], after[0], c);
     return c.json(ok({ success: true }));
   } catch (e) {
     return handleError(e as Error, c);

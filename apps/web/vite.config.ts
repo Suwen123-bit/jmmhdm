@@ -5,9 +5,11 @@ import { VitePWA } from 'vite-plugin-pwa';
 import path from 'node:path';
 
 export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, process.cwd(), '');
-  const apiTarget = env.VITE_API_PROXY ?? 'http://localhost:3000';
+  const envDir = path.resolve(__dirname, '../..');
+  const env = loadEnv(mode, envDir, '');
+  const apiTarget = env.VITE_API_PROXY ?? env.VITE_API_URL ?? 'http://localhost:3001';
   return {
+    envDir,
     plugins: [
       react(),
       tailwindcss(),

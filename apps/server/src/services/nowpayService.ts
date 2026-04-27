@@ -61,6 +61,9 @@ async function nowpayFetch(path: string, init?: RequestInit) {
 
 /**
  * 创建充值订单（payment）
+ *
+ * Dev fallback: 在 NODE_ENV=development 且未配置 NOWPAY_API_KEY 时，
+ * 直接创建已完成的 mock 充值并即时入账，便于本地调试。
  */
 export async function createDeposit(opts: {
   userId: number;
@@ -68,6 +71,58 @@ export async function createDeposit(opts: {
   payCurrency: string;
 }) {
   const orderId = `dep_${opts.userId}_${nanoid(12)}`;
+
+  // ===== Dev mock 路径 =====
+  // 触发条件：开发环境，且 (a) 未配置 API key 或 (b) PUBLIC_API_URL 是 localhost
+  // 因为 NOWPayments 无法回调 localhost，真实订单永远收不到 IPN
+  const isLocalhostApi = /^https?:\/\/(localhost|127\.0\.0\.1)/i.test(env.PUBLIC_API_URL);
+  if (env.NODE_ENV === 'development' && (!env.NOWPAY_API_KEY || isLocalhostApi)) {
+    logger.warn(
+      { orderId, userId: opts.userId, amountUsd: opts.amountUsd },
+      '[nowpay] DEV mock deposit (auto-credit)'
+    );
+    const mockPayAmount = opts.amountUsd; // 1:1 USD≈USDT
+    const mockAddress = `MOCK${opts.payCurrency.toUpperCase()}${nanoid(20)}`;
+    const inserted = await db
+      .insert(deposits)
+      .values({
+        userId: opts.userId,
+        nowpayInvoiceId: `mock_${nanoid(10)}`,
+        nowpayPaymentId: `mock_${nanoid(10)}`,
+        orderId,
+        payCurrency: opts.payCurrency,
+        payAmount: mockPayAmount.toString(),
+        priceAmount: opts.amountUsd.toFixed(6),
+        actuallyPaid: mockPayAmount.toString(),
+        outcomeAmount: opts.amountUsd.toFixed(6),
+        payAddress: mockAddress,
+        status: 'finished',
+        confirmedAt: new Date(),
+        expireAt: new Date(Date.now() + 60 * 60 * 1000),
+      })
+      .returning();
+    const dep = inserted[0]!;
+    // 即时入账
+    await db.transaction(async (tx) => {
+      await changeBalanceTx(tx, {
+        userId: opts.userId,
+        amount: opts.amountUsd.toFixed(6),
+        type: 'deposit',
+        refType: 'deposit',
+        refId: dep.id,
+        description: `[DEV] mock deposit ${opts.amountUsd} ${opts.payCurrency.toUpperCase()}`,
+      });
+    });
+    void publisher.publish(
+      CHANNELS.USER_EVENT,
+      JSON.stringify({
+        userId: opts.userId,
+        event: WS_EVENTS.WALLET_UPDATED,
+        data: { reason: 'deposit', amount: opts.amountUsd.toFixed(6) },
+      })
+    );
+    return { deposit: dep, payAddress: mockAddress, payAmount: mockPayAmount };
+  }
 
   const body = {
     price_amount: opts.amountUsd,

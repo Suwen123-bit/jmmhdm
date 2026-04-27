@@ -6,7 +6,7 @@ import { featureGuard } from '../middleware/featureGuard.js';
 import { ok, handleError } from '../middleware/errorHandler.js';
 import { openTrade, listUserTrades } from '../services/tradeEngine.js';
 import { getLatestTick, getLatestTicks, getKlines } from '../services/priceCache.js';
-import { listRiskConfigs } from '../services/riskConfigService.js';
+import { getRiskConfig, listRiskConfigs } from '../services/riskConfigService.js';
 import { rateLimit } from '../middleware/rateLimiter.js';
 
 const trade = new Hono();
@@ -45,6 +45,18 @@ trade.get('/klines/:symbol', async (c) => {
   }
 });
 
+trade.get('/kline', async (c) => {
+  try {
+    const symbol = (c.req.query('symbol') ?? 'btcusdt').toLowerCase();
+    const interval = c.req.query('interval') ?? '1min';
+    const limit = Math.min(1000, Number(c.req.query('limit') ?? 500));
+    const klines = await getKlines(symbol, interval, limit);
+    return c.json(ok(klines));
+  } catch (e) {
+    return handleError(e as Error, c);
+  }
+});
+
 trade.get('/risk-configs', async (c) => {
   try {
     const items = await listRiskConfigs();
@@ -54,10 +66,22 @@ trade.get('/risk-configs', async (c) => {
   }
 });
 
+trade.get('/risk', async (c) => {
+  try {
+    const symbol = (c.req.query('symbol') ?? 'btcusdt').toLowerCase();
+    const duration = Number(c.req.query('duration') ?? 60);
+    const config = await getRiskConfig(symbol, duration);
+    return c.json(ok(config));
+  } catch (e) {
+    return handleError(e as Error, c);
+  }
+});
+
 // 需要登录的接口
 trade.use('/open', requireAuth, rateLimit({ windowSec: 1, max: 5, keyPrefix: 'rl:trade-open' }));
 trade.use('/positions', requireAuth);
 trade.use('/history', requireAuth);
+trade.use('/list', requireAuth);
 
 trade.post('/open', zValidator('json', tradeOpenSchema), async (c) => {
   try {
@@ -86,6 +110,22 @@ trade.get('/positions', async (c) => {
 });
 
 trade.get('/history', zValidator('query', tradeListQuerySchema), async (c) => {
+  try {
+    const { userId } = c.get('auth');
+    const q = c.req.valid('query');
+    const data = await listUserTrades({
+      userId,
+      status: q.status,
+      page: q.page,
+      pageSize: q.pageSize,
+    });
+    return c.json(ok(data));
+  } catch (e) {
+    return handleError(e as Error, c);
+  }
+});
+
+trade.get('/list', zValidator('query', tradeListQuerySchema), async (c) => {
   try {
     const { userId } = c.get('auth');
     const q = c.req.valid('query');

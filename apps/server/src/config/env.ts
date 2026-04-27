@@ -28,6 +28,7 @@ const envSchema = z.object({
 
   HTX_WS_URL: z.string().default('wss://api.huobi.pro/ws'),
   HTX_REST_URL: z.string().default('https://api.huobi.pro'),
+  MARKET_DATA_PROVIDER: z.enum(['htx', 'mock']).default('htx'),
 
   NOWPAY_API_KEY: z.string().optional(),
   NOWPAY_IPN_SECRET: z.string().optional(),

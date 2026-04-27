@@ -9,7 +9,9 @@ import { db } from '../db/client.js';
 import { deposits, withdrawals } from '../db/schema.js';
 import { createDeposit } from '../services/nowpayService.js';
 import { createWithdrawal } from '../services/withdrawService.js';
-import { getBalance } from '../services/walletService.js';
+import { getBalance, changeBalance } from '../services/walletService.js';
+import { env } from '../config/env.js';
+import { z } from 'zod';
 
 const wallet = new Hono();
 wallet.use('*', requireAuth);
@@ -101,6 +103,31 @@ wallet.get('/withdrawals', async (c) => {
         .where(eq(withdrawals.userId, userId)),
     ]);
     return c.json(ok({ items, total: totalRow[0]?.count ?? 0, page, pageSize }));
+  } catch (e) {
+    return handleError(e as Error, c);
+  }
+});
+
+// ============== Dev Only: 模拟充值（仅 NODE_ENV=development）==============
+const devDepositSchema = z.object({
+  amount: z.number().positive().max(1_000_000),
+});
+
+wallet.post('/dev-deposit', zValidator('json', devDepositSchema), async (c) => {
+  if (env.NODE_ENV !== 'development') {
+    return c.json({ ok: false, error: { code: 'NOT_FOUND', message: '接口不存在' } }, 404);
+  }
+  try {
+    const { userId } = c.get('auth');
+    const { amount } = c.req.valid('json');
+    const r = await changeBalance({
+      userId,
+      amount,
+      type: 'admin_adjust',
+      refType: 'dev_deposit',
+      description: `[DEV] mock deposit +${amount} USDT`,
+    });
+    return c.json(ok({ balanceAfter: r.balanceAfter }));
   } catch (e) {
     return handleError(e as Error, c);
   }

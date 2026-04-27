@@ -32,6 +32,7 @@ import { redis } from './redis.js';
 import { initFeatureService, ensureDefaultConfigs } from './services/featureService.js';
 import { initRiskConfigService } from './services/riskConfigService.js';
 import { htxPriceEngine } from './services/htxPriceEngine.js';
+import { mockPriceEngine } from './services/mockPriceEngine.js';
 import { recoverPendingTrades } from './services/tradeEngine.js';
 import { startWorkers } from './jobs/workers.js';
 import { ensureRepeatableJobs } from './jobs/queues.js';
@@ -208,8 +209,12 @@ async function bootstrap() {
   await initFeatureService();
   initRiskConfigService();
 
-  // 3. HTX 行情接入
-  htxPriceEngine.start();
+  // 3. 行情接入：根据 MARKET_DATA_PROVIDER 选择 htx | mock
+  if (env.MARKET_DATA_PROVIDER === 'mock') {
+    mockPriceEngine.start();
+  } else {
+    htxPriceEngine.start();
+  }
 
   // 4. BullMQ workers + 重复任务调度
   startWorkers();
@@ -237,6 +242,7 @@ async function bootstrap() {
   const shutdown = async (signal: string) => {
     logger.info({ signal }, '[boot] shutting down...');
     htxPriceEngine.stop();
+    mockPriceEngine.stop();
     server.close();
     process.exit(0);
   };
