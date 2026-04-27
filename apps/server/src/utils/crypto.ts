@@ -9,7 +9,10 @@ function getKey(): Buffer {
     // 开发环境降级：用 JWT secret 派生
     return crypto.createHash('sha256').update(env.JWT_ACCESS_SECRET).digest();
   }
-  return Buffer.from(key, 'base64');
+  // 期望 base64 编码的 32 字节 key；若长度不符，则用 sha256 派生确保 32 字节
+  const buf = Buffer.from(key, 'base64');
+  if (buf.length === 32) return buf;
+  return crypto.createHash('sha256').update(key).digest();
 }
 
 export function encrypt(plaintext: string): string {
